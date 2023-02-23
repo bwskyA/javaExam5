@@ -4,53 +4,50 @@ import com.jakubowski.clinic.model.appointment.Appointment;
 import com.jakubowski.clinic.model.doctor.Doctor;
 import com.jakubowski.clinic.model.patient.Patient;
 import com.jakubowski.clinic.repository.AppointmentRepository;
-import org.junit.jupiter.api.Assertions;
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 
 import java.time.LocalDateTime;
+import java.time.Month;
 
-@DataJpaTest
+import static org.mockito.Mockito.when;
+
+@SpringBootTest
 class AppointmentServiceTest {
     @Autowired
+    private AppointmentService appointmentService;
+    @MockBean
     private AppointmentRepository appointmentRepository;
 
     @Test
-    void addAppointment() {
-        Patient patient = new Patient(3, "Michal", "Lewandowski", "1234567879", "dupa@gmail.com", false);
-        Doctor doctor = new Doctor(3, "Adam", "Jakubowski"
-                , "dentists", 123456789, false);
-        LocalDateTime currentTime = LocalDateTime.now().plusHours(2);
+    void testAddAppointment() {
+        Doctor doctor = Doctor.builder()
+                .id(1)
+                .name("Michal")
+                .lastname("Kowalski")
+                .speciality("dentist")
+                .nip("1234567890")
+                .build();
 
-        Appointment appointment = new Appointment(2, doctor, patient, currentTime, 3, currentTime.plusHours(3) ,false, false);
+        Patient patient = Patient.builder()
+                .id(1)
+                .name("Michał")
+                .lastname("Kowalski")
+                .email("m.kowalski@gmail.com")
+                .pesel("12345678901")
+                .build();
+        Appointment appointment = Appointment.builder()
+                .id(1)
+                .doctor(doctor)
+                .patient(patient)
+                .date(LocalDateTime.of(2023, Month.JANUARY, 3, 6, 30, 40, 50000))
+                .duration(3)
+                .build();
 
-        Assertions.assertNotNull(appointmentRepository.save(appointment));
-    }
-
-    @Test
-    void confirmAppointment() {
-        Patient patient = new Patient(3, "Michal", "Lewandowski", "1234567879", "dupa@gmail.com", false);
-        Doctor doctor = new Doctor(3, "Adam", "Jakubowski"
-                , "dentists", 123456789, false);
-        LocalDateTime currentTime = LocalDateTime.now();
-
-        Appointment appointment = new Appointment(2, doctor, patient, currentTime, 3, currentTime.plusHours(3) ,false, false);
-        appointment.setConfirmed(true);
-
-        Assertions.assertTrue(appointment.isConfirmed());
-    }
-
-    @Test
-    void cancellAppointment() {
-        Patient patient = new Patient(3, "Michal", "Lewandowski", "1234567879", "dupa@gmail.com", false);
-        Doctor doctor = new Doctor(3, "Adam", "Jakubowski"
-                , "dentists", 123456789, false);
-        LocalDateTime currentTime = LocalDateTime.now();
-
-        Appointment appointment = new Appointment(2, doctor, patient, currentTime, 3, currentTime.plusHours(3) ,false, false);
-        appointment.setCancelled(true);
-
-        Assertions.assertTrue(appointment.isCancelled());
+        when(appointmentRepository.save(appointment)).thenReturn(appointment);
+        Assertions.assertThat(appointmentService.addAppointment(appointment)).isEqualTo(appointment);
     }
 }
