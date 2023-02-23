@@ -34,13 +34,6 @@ public class AppointmentService {
         appointment.setCancelled(true);
     }
 
-    public boolean checkAppointmentDoctor(Doctor doctor, LocalDateTime start, LocalDateTime end) {
-        List<Appointment> appointmentListWithDoctor = appointmentRepository.findAll()
-                .stream().filter(visit -> visit.getDoctor().equals(doctor)).toList();
-
-        return appointmentListWithDoctor.stream().anyMatch(v -> end.isBefore(v.getDate()) || (v.getEndAppointmend().isAfter(start)));
-    }
-
     public boolean checkAppointmentDatesForDoctorAndPatient(Doctor doctor, Patient patient, LocalDateTime start, LocalDateTime end) {
         List<Appointment> allAppointments = appointmentRepository.findAll();
         List<Appointment> appointmentListWithDoctor = allAppointments
@@ -53,14 +46,6 @@ public class AppointmentService {
             return true;
         }
         return false;
-    }
-
-    public boolean checkAppointmentPatient(Patient patient, LocalDateTime start, LocalDateTime end) {
-        List<Appointment> appointmentListWithPatients = appointmentRepository.findAll()
-                .stream().filter(visit -> visit.getPatient().equals(patient)).toList();
-
-        return appointmentListWithPatients.stream()
-                .anyMatch(v -> end.isBefore(v.getDate()) || (v.getEndAppointmend().isAfter(start)));
     }
 
     public void countEndDate(Appointment appointment) {
