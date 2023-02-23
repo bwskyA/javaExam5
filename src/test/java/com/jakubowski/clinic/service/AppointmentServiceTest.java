@@ -12,8 +12,10 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 
 import java.time.LocalDateTime;
 import java.time.Month;
+import java.util.Optional;
 
-import static org.mockito.Mockito.when;
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.mockito.Mockito.*;
 
 @SpringBootTest
 class AppointmentServiceTest {
@@ -21,6 +23,7 @@ class AppointmentServiceTest {
     private AppointmentService appointmentService;
     @MockBean
     private AppointmentRepository appointmentRepository;
+
 
     @Test
     void testAddAppointment() {
@@ -50,4 +53,61 @@ class AppointmentServiceTest {
         when(appointmentRepository.save(appointment)).thenReturn(appointment);
         Assertions.assertThat(appointmentService.addAppointment(appointment)).isEqualTo(appointment);
     }
+
+    @Test
+    void testConfirmAppoitment() {
+        Doctor doctor = Doctor.builder()
+                .id(1L)
+                .name("Michal")
+                .lastname("Kowalski")
+                .speciality("dentist")
+                .nip("1234567890")
+                .build();
+
+        Patient patient = Patient.builder()
+                .id(1L)
+                .name("Michał")
+                .lastname("Kowalski")
+                .email("m.kowalski@gmail.com")
+                .pesel("12345678901")
+                .build();
+        Appointment appointment = Appointment.builder()
+                .id(1L)
+                .doctor(doctor)
+                .patient(patient)
+                .date(LocalDateTime.of(2023, Month.JANUARY, 3, 6, 30, 40, 50000))
+                .duration(3)
+                .build();
+        when(appointmentRepository.findById(1L)).thenReturn(Optional.of(appointment));
+        assertAll(() -> appointmentService.confirmAppointment(1L));
+    }
+
+    @Test
+    void testCancelAppointment() {
+        Doctor doctor = Doctor.builder()
+                .id(1L)
+                .name("Michal")
+                .lastname("Kowalski")
+                .speciality("dentist")
+                .nip("1234567890")
+                .build();
+
+        Patient patient = Patient.builder()
+                .id(1L)
+                .name("Michał")
+                .lastname("Kowalski")
+                .email("m.kowalski@gmail.com")
+                .pesel("12345678901")
+                .build();
+        Appointment appointment = Appointment.builder()
+                .id(1L)
+                .doctor(doctor)
+                .patient(patient)
+                .date(LocalDateTime.of(2023, Month.JANUARY, 3, 6, 30, 40, 50000))
+                .duration(3)
+                .build();
+        when(appointmentRepository.findById(1L)).thenReturn(Optional.of(appointment));
+        assertAll(() -> appointmentService.cancelAppointment(1L));
+    }
+
 }

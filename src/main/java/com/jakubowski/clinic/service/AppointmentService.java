@@ -7,6 +7,7 @@ import com.jakubowski.clinic.model.patient.Patient;
 import com.jakubowski.clinic.repository.AppointmentRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -24,11 +25,12 @@ public class AppointmentService {
         return appointmentRepository.save(appointment);
     }
 
+    @Transactional
     public void confirmAppointment(long id) {
         Appointment appointment = appointmentRepository.findById(id).orElseThrow();
         appointment.setConfirmed(true);
     }
-
+    @Transactional
     public void cancelAppointment(long id) {
         Appointment appointment = appointmentRepository.findById(id).orElseThrow();
         appointment.setCancelled(true);
