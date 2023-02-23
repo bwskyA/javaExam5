@@ -18,8 +18,7 @@ public class AppointmentService {
 
     public Appointment addAppointment(Appointment appointment) {
         countEndDate(appointment);
-        if (checkAppointmentDoctor(appointment.getDoctor(), appointment.getDate(), appointment.getEndAppointmend())
-                && checkAppointmentPatient(appointment.getPatient(), appointment.getDate(), appointment.getEndAppointmend())) {
+        if (checkAppointmentDatesForDoctorAndPatient(appointment.getDoctor(), appointment.getPatient(), appointment.getDate(), appointment.getEndAppointmend())) {
             throw new IllegalDateRangeExeption("Incorrect date range used, dates overlap with another visit");
         }
         return appointmentRepository.save(appointment);
@@ -30,7 +29,7 @@ public class AppointmentService {
         appointment.setConfirmed(true);
     }
 
-    public void cancellAppointment(long id) {
+    public void cancelAppointment(long id) {
         Appointment appointment = appointmentRepository.findById(id).orElseThrow();
         appointment.setCancelled(true);
     }
@@ -40,6 +39,20 @@ public class AppointmentService {
                 .stream().filter(visit -> visit.getDoctor().equals(doctor)).toList();
 
         return appointmentListWithDoctor.stream().anyMatch(v -> end.isBefore(v.getDate()) || (v.getEndAppointmend().isAfter(start)));
+    }
+
+    public boolean checkAppointmentDatesForDoctorAndPatient(Doctor doctor, Patient patient, LocalDateTime start, LocalDateTime end) {
+        List<Appointment> allAppointments = appointmentRepository.findAll();
+        List<Appointment> appointmentListWithDoctor = allAppointments
+                .stream().filter(visit -> visit.getDoctor().equals(doctor)).toList();
+        List<Appointment> appointmentListWithPatients = allAppointments
+                .stream().filter(visit -> visit.getPatient().equals(patient)).toList();
+
+        if (appointmentListWithPatients.stream().anyMatch(v -> end.isBefore(v.getDate()) || (v.getEndAppointmend().isAfter(start))) ||
+                appointmentListWithDoctor.stream().anyMatch(v -> end.isBefore(v.getDate()) || (v.getEndAppointmend().isAfter(start)))) {
+            return true;
+        }
+        return false;
     }
 
     public boolean checkAppointmentPatient(Patient patient, LocalDateTime start, LocalDateTime end) {

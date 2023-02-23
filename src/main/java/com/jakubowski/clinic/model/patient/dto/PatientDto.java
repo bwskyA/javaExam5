@@ -1,14 +1,13 @@
 package com.jakubowski.clinic.model.patient.dto;
 
-import lombok.Builder;
-import lombok.Value;
+import lombok.*;
 
-@Value
-@Builder
+@Getter
+@Setter
+@NoArgsConstructor
 public class PatientDto {
-    long id;
-    String name;
-    String lastname;
-    String pesel;
-    String email;
+    public String name;
+    public String lastname;
+    public String pesel;
+    public String email;
 }

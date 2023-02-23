@@ -26,16 +26,16 @@ public class AppointmentController {
         return new ResponseEntity<>(modelMapper.map(addedAppointment, AppointmentDto.class), HttpStatus.OK);
     }
 
-    @PostMapping("/confirm/{id}")
+    @PostMapping("/{id}/confirm")
     public ResponseEntity confirmAppointment(@PathVariable long id) {
         appointmentService.confirmAppointment(id);
 
         return new ResponseEntity<>("Sucesfully confirmed your appointment", HttpStatus.OK);
     }
 
-    @PostMapping("/cancelled/{id}")
+    @PostMapping("/{id}/cancelled")
     public ResponseEntity cancellAppointment(@PathVariable long id) {
-        appointmentService.cancellAppointment(id);
+        appointmentService.cancelAppointment(id);
 
         return new ResponseEntity<>("Appointment sucesfully cancelled", HttpStatus.OK);
     }

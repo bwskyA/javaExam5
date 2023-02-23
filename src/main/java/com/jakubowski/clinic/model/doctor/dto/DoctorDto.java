@@ -1,15 +1,13 @@
 package com.jakubowski.clinic.model.doctor.dto;
 
-import lombok.Builder;
-import lombok.Value;
+import lombok.*;
 
-@Value
-@Builder
+@Getter
+@Setter
+@NoArgsConstructor
 public class DoctorDto {
-    long id;
-    String name;
-    String lastname;
-    String speciality;
-    long nip;
-
+    public String name;
+    public String lastname;
+    public String speciality;
+    public String nip;
 }
