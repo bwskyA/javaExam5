@@ -76,8 +76,10 @@ public class DoctorService {
             Optional.ofNullable(doctor.getName()).ifPresent(docEdit::setName);
             Optional.ofNullable(doctor.getLastname()).ifPresent(docEdit::setLastname);
             Optional.ofNullable(doctor.getSpeciality()).ifPresent(docEdit::setSpeciality);
-            if (doctor.getNip().length() != 0) {
-                Optional.of(doctor.getNip()).ifPresent(docEdit::setNip);
+            if (doctor.getNip() != null){
+                if (doctor.getNip().length() != 0 ) {
+                    Optional.of(doctor.getNip()).ifPresent(docEdit::setNip);
+                }
             }
 
             return docEdit;
