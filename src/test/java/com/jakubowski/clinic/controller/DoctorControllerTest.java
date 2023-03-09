@@ -6,21 +6,35 @@ import com.jakubowski.clinic.model.doctor.Doctor;
 import com.jakubowski.clinic.model.doctor.command.CreateDoctorCommand;
 import com.jakubowski.clinic.service.DoctorService;
 
+import org.dbunit.database.*;
+import org.dbunit.ext.h2.H2DataTypeFactory;
+import org.junit.BeforeClass;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.support.EncodedResource;
 import org.springframework.http.MediaType;
+import org.springframework.jdbc.datasource.init.ScriptUtils;
 import org.springframework.test.web.servlet.MockMvc;
+
+import javax.sql.DataSource;
+import java.nio.charset.StandardCharsets;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
+import java.sql.Statement;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@SpringBootTest(classes = ClinicApplication.class)
 @AutoConfigureMockMvc
+@SpringBootTest(classes = ClinicApplication.class)
 class DoctorControllerTest {
-
     private final MockMvc mockMvc;
     private final DoctorService doctorService;
     private final ObjectMapper objectMapper;
@@ -30,6 +44,24 @@ class DoctorControllerTest {
         this.mockMvc = mockMvc;
         this.doctorService = doctorService;
         this.objectMapper = objectMapper;
+    }
+
+    @BeforeClass
+    public static void setupDatabase(DataSource dataSource) throws Exception {
+        IDatabaseConnection connection = new DatabaseConnection(dataSource.getConnection());
+        connection.getConfig().setProperty(DatabaseConfig.FEATURE_QUALIFIED_TABLE_NAMES, true);
+        connection.getConfig().setProperty(DatabaseConfig.PROPERTY_DATATYPE_FACTORY, new H2DataTypeFactory());
+
+        Resource schema = new ClassPathResource("schema.sql");
+        ScriptUtils.executeSqlScript(connection.getConnection(), new EncodedResource(schema, StandardCharsets.UTF_8));
+    }
+
+    @AfterEach
+    void clearData() throws SQLException {
+        Connection conn = DriverManager.getConnection ("jdbc:h2:~/db", "user","password");
+        Statement stmt = conn.createStatement();
+        String sql = "DELETE FROM DOCTOR";
+        stmt.executeUpdate(sql);
     }
 
     @Test

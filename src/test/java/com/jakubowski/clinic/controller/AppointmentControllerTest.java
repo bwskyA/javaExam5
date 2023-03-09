@@ -76,7 +76,7 @@ class AppointmentControllerTest {
         CreateAppointmentCommand appointmentCommand = CreateAppointmentCommand.builder()
                 .doctorId(1)
                 .patientId(1)
-                .date(LocalDateTime.parse("2023-03-05 14:22:15", DATE_FORMATTER))
+                .date(LocalDateTime.parse("2023-03-17 14:22:15", DATE_FORMATTER))
                 .duration(2).build();
 
         String createCommandJson = objectMapper.writeValueAsString(appointmentCommand);
@@ -129,7 +129,7 @@ class AppointmentControllerTest {
         CreateAppointmentCommand appointmentCommand = CreateAppointmentCommand.builder()
                 .doctorId(1)
                 .patientId(1)
-                .date(LocalDateTime.parse("2023-03-05 14:22:15", DATE_FORMATTER))
+                .date(LocalDateTime.parse("2023-03-17 14:22:15", DATE_FORMATTER))
                 .duration(2).build();
 
         String createCommandJson = objectMapper.writeValueAsString(appointmentCommand);
@@ -187,7 +187,7 @@ class AppointmentControllerTest {
         CreateAppointmentCommand appointmentCommand = CreateAppointmentCommand.builder()
                 .doctorId(1)
                 .patientId(1)
-                .date(LocalDateTime.parse("2023-03-05 14:22:15", DATE_FORMATTER))
+                .date(LocalDateTime.parse("2023-03-17 14:22:15", DATE_FORMATTER))
                 .duration(2).build();
 
         String createCommandJson = objectMapper.writeValueAsString(appointmentCommand);
